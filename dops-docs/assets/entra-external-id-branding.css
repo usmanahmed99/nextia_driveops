@@ -108,20 +108,81 @@ a {
   color: var(--dops-electric) !important;
 }
 
-/* Social / federated provider tiles (Google, Outlook/Hotmail) */
+/* ---------------------------------------------------------------------------
+   Social / federated provider buttons (Google, Outlook/Hotmail)
+   These render in a separate box below the main card. We make them look like
+   first-class, full-width buttons that match the rest of the card.
+   NB: if a rule doesn't take, inspect the live button in dev tools and add its
+   real class here — Microsoft's exact markup can vary by tenant/experience.
+   --------------------------------------------------------------------------- */
 .ext-promoted-fed-cred-box,
 .ext-promoted-fed-creds {
   border: 1px solid #e2ecf9 !important;
   border-radius: var(--dops-card-radius) !important;
   box-shadow: var(--dops-glow) !important;
-  padding: 8px !important;
+  padding: 12px !important;
   background: #ffffff !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
 }
-.ext-promoted-fed-cred-button {
+
+/* Each provider button — target several likely shapes for robustness */
+.ext-promoted-fed-cred-button,
+.ext-promoted-fed-cred-box button,
+.ext-promoted-fed-cred-box a,
+button[class*="fed-cred"],
+a[class*="fed-cred"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  min-height: 44px !important;
+  padding: 10px 14px !important;
+  border: 1px solid #cbd9ec !important;
   border-radius: var(--dops-control-radius) !important;
+  background: #ffffff !important;
+  color: var(--dops-navy) !important;
+  font-weight: 600 !important;
+  box-shadow: 0 1px 2px rgba(7, 27, 58, 0.06) !important;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
-.ext-promoted-fed-cred-button:hover {
+.ext-promoted-fed-cred-button:hover,
+.ext-promoted-fed-cred-box button:hover,
+.ext-promoted-fed-cred-box a:hover,
+button[class*="fed-cred"]:hover,
+a[class*="fed-cred"]:hover {
   background: var(--dops-ice) !important;
+  border-color: var(--dops-electric) !important;
+  box-shadow: var(--dops-glow) !important;
+}
+
+/* Provider icon + label */
+.ext-promoted-fed-cred-img,
+.ext-promoted-fed-cred-box img {
+  width: 20px !important;
+  height: 20px !important;
+}
+.ext-promoted-fed-cred-button-text {
+  font-weight: 600 !important;
+}
+
+/* ---------------------------------------------------------------------------
+   Account picker tiles ("Pick an account")
+   --------------------------------------------------------------------------- */
+.ext-account-tile,
+.tile-container,
+div[class*="account-tile"] {
+  border: 1px solid #e2ecf9 !important;
+  border-radius: var(--dops-control-radius) !important;
+  margin-bottom: 8px !important;
+  transition: background 0.15s ease, border-color 0.15s ease !important;
+}
+.ext-account-tile:hover,
+div[class*="account-tile"]:hover {
+  background: var(--dops-ice) !important;
+  border-color: var(--dops-electric) !important;
 }
 
 /* Validation / error text */

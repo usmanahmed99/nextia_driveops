@@ -74,6 +74,25 @@ redirect flow untouched.
    (easiest: just trigger sign-in from the app).
 8. Repeat for any **language-specific** branding (e.g. French) if you localize the pages.
 
+### Troubleshooting: "the logo shows but the styling/buttons still look plain"
+
+That means the **banner logo + footer text applied (Basics) but the Custom CSS did not**. The
+Google / Outlook buttons and the card only restyle once the CSS is uploaded *and* its selectors
+match the live DOM.
+
+1. **Confirm the CSS is uploaded:** Company branding → your locale → **Layout → Custom CSS** must
+   show our file as uploaded (re-upload [`entra-external-id-branding.css`](assets/entra-external-id-branding.css)
+   if not), then **Save**.
+2. **Bust the cache:** changes take a few minutes and are cached — always test in a **fresh
+   incognito window**.
+3. **If a specific element (e.g. a social button) still won't style:** the only ground truth is
+   Microsoft's live markup. Open the sign-in page, **right-click the button → Inspect**, read its
+   actual `class`, and add/adjust the selector in the CSS. Our file already targets the documented
+   `.ext-promoted-fed-cred-button` plus defensive `[class*="fed-cred"]` fallbacks and the account
+   tiles, but Microsoft can vary the markup per tenant/experience.
+4. The social buttons render in a **separate box below the main card** (`.ext-promoted-fed-cred-box`)
+   — that's expected; we style it to match.
+
 ### Codify it (optional) via Microsoft Graph
 
 Branding can be version-controlled instead of hand-edited:
