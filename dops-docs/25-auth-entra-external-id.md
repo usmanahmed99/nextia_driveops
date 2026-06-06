@@ -29,19 +29,31 @@ The MSAL client already derives `knownAuthorities` from the authority host, so i
 
 ## Branding the sign-in pages
 
+> **Decision (2026-06-06): authentication stays Entra-hosted. Native authentication is NOT
+> used.** All sign-in/sign-up happens on Microsoft's hosted pages; we brand them via Company
+> branding only. Do not build an in-SPA sign-in flow.
+
 The hosted pages at `https://<tenant>.ciamlogin.com/...` (sign in, sign up, "Create one")
 are styled through **Company branding** on the External ID tenant — this is tenant
-configuration, not app code. Four levels of control, increasing effort vs. polish:
+configuration, not app code:
 
-| Level | Effort | What you get |
-|-------|--------|--------------|
-| 1. Company branding | Low (portal) | Background image/color, banner + square logo, favicon, sign-in text, footer (privacy/terms), basic colors |
-| 2. Custom CSS | Medium | Restyle the card, buttons, inputs, social-provider tiles, fonts, backgrounds to match the app |
-| 3. Custom HTML page template | Higher | Your own full-page HTML; Entra injects just the input controls |
-| 4. Native authentication | Highest | Build the whole sign-in UI inside the SPA — no redirect to `ciamlogin.com` |
+| Level | Effort | What you get | Status |
+|-------|--------|--------------|--------|
+| 1. Company branding (Basics) | Low (portal) | Background image/color, banner + square logo, favicon, sign-in text, footer (privacy/terms) | **Use this** |
+| 2. Custom CSS | Medium | Restyle card/inputs/buttons — **but see the Fluent caveat below** | Best-effort |
+| 3. Custom HTML page template | Higher | Your own full-page HTML | Optional |
+| 4. Native authentication | Highest | In-SPA sign-in, no redirect | **Not used (by decision)** |
 
-**Recommended: do levels 1 + 2.** Best polish-per-effort, no hosting, keeps the MSAL
-redirect flow untouched.
+> **⚠️ This tenant uses the NEW Entra "External ID" experience (Fluent UI v9 / Griffel).** Its
+> control class names are auto-generated hashes that change between Microsoft releases, so the
+> classic `ext-*` custom-CSS selectors **do not apply** and direct class targeting is fragile.
+> Our CSS therefore anchors on stable `data-testid` hooks via `:has()` (see the bottom of
+> [`entra-external-id-branding.css`](assets/entra-external-id-branding.css)) — best-effort, and
+> may need a touch-up after Microsoft updates. **Lean on Basics (level 1) for the reliable,
+> on-brand result; treat custom CSS as a bonus.**
+
+**Recommended: rely on Basics (level 1) + the best-effort CSS (level 2).** Keeps the MSAL
+redirect flow untouched and accepts the hosted experience as-is.
 
 ### Portal steps (levels 1 + 2)
 
