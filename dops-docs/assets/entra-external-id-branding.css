@@ -82,20 +82,49 @@ body,
   outline: none !important;
 }
 
-/* Primary button */
-.ext-button.ext-primary {
+/* ---------------------------------------------------------------------------
+   Primary button (Next / Sign in / Continue)
+   Must be visible in EVERY state — not only on hover. We target the documented
+   class AND the actual submit controls (id/type) Microsoft renders, and force
+   visibility/opacity/colour so nothing hides it by default.
+   --------------------------------------------------------------------------- */
+.ext-button.ext-primary,
+#idSIButton9,
+button[type="submit"],
+input[type="submit"],
+.ext-sign-in-box button[type="submit"],
+.ext-sign-in-box input[type="submit"] {
   background: var(--dops-electric) !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
   border: none !important;
   border-radius: var(--dops-control-radius) !important;
   box-shadow: var(--dops-glow) !important;
   font-weight: 700 !important;
+  min-height: 40px !important;
+  padding: 8px 20px !important;
 }
-.ext-button.ext-primary:hover {
+.ext-button.ext-primary:hover,
+#idSIButton9:hover,
+button[type="submit"]:hover,
+input[type="submit"]:hover {
   background: #0b3fe0 !important;
+  color: #ffffff !important;
+}
+.ext-button.ext-primary:disabled,
+#idSIButton9:disabled,
+button[type="submit"]:disabled,
+input[type="submit"]:disabled {
+  background: #9db8f6 !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
 }
 
-/* Secondary / back button */
-.ext-button.ext-secondary {
+/* Secondary / back button (e.g. "Back", "Cancel") */
+.ext-button.ext-secondary,
+#idBtn_Back,
+button[type="button"].ext-secondary {
   background: #ffffff !important;
   color: var(--dops-navy) !important;
   border: 1px solid #cbd9ec !important;
