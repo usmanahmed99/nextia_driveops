@@ -52,15 +52,22 @@ redirect flow untouched.
    Under the **Default sign-in experience**, click **Edit** (or **Customize / Get started**
    if none exists yet).
 3. **Basics** — set the page **Background image** (1920×1080 recommended) and/or
-   **Background color** `#eef7ff` (app "ice"); set the **Favicon**.
+   **Background color** `#eef7ff` (app "ice"); set the **Favicon** to
+   `drivingops_favicon_192.png`.
 4. **Layout** — keep the default centered template. Open **Custom CSS → Upload** and upload
    [`assets/entra-external-id-branding.css`](assets/entra-external-id-branding.css). Tip: use
    the panel's **Download template** first, then layer our overrides on top so selectors stay
    current.
-5. **Header** — upload the **banner logo** (a transparent PNG of the DrivingOps mark/wordmark,
-   ~245×36, max ~36px tall). **Footer** — add **Privacy & cookies** and **Terms of use** links.
-6. **Sign-in form** — optionally set a **square logo** (240×240), sign-in page **text**, and
-   username hint. (The page heading/sub-copy you control in-app live in the SPA, not here.)
+5. **Header** — upload the **banner logo**: `drivingops_primary_horizontal.png` (colored, for the
+   light page). **Footer** — add **Privacy & cookies** and **Terms of use** links.
+6. **Sign-in form** — optionally set a **square logo** (`drivingops_square_app_icon_256.png`),
+   sign-in page **text**, and username hint. (The page heading/sub-copy you control in-app live
+   in the SPA, not here.)
+
+> Logo assets live in the frontend repo at
+> [`dops-frontend/public/brand/`](../dops-frontend/public/brand/) (also served at `/brand/...`).
+> Use the **colored** horizontal logo on the light Entra page; the reverse-white variant
+> (`drivingops_reverse_white_horizontal_transparent.png`) is for dark backgrounds.
 7. **Review + Save.** Branding/CSS changes can take a while to propagate and are cached —
    test in a fresh incognito window. Verify against a real sign-in:
    `https://<tenant>.ciamlogin.com/<tenant>.onmicrosoft.com/oauth2/v2.0/authorize?...`
