@@ -137,24 +137,27 @@ Install the SDK (already in `requirements.txt`): `pip install -r requirements.tx
 
 ## Step 4 — Deploy config (Azure)
 
-Keep secrets in **Key Vault**, mirroring the ACS / worker-key pattern in
-`dops-infra/infra/main.bicep`. For each of `STRIPE_SECRET_KEY` and
-`STRIPE_WEBHOOK_SECRET`:
+**The Bicep is already wired** (`dops-infra/infra/main.bicep` +
+`modules/key-vault.bicep` + `parameters/dev.bicepparam`). The Key Vault secrets
+(`DOPS-STRIPE-SECRET-KEY`, `DOPS-STRIPE-WEBHOOK-SECRET`) are created on every deploy
+(empty by default) and bound to the API container only when populated — so a deploy
+is safe with nothing set, and Stripe simply stays off until you supply values.
 
-1. Add a Key Vault secret (e.g. `dops-stripe-secret-key`, `dops-stripe-webhook-secret`)
-   in `modules/key-vault.bicep`, exposing a `*SecretName` output (copy the
-   `acsConnectionStringSecretName` lines).
-2. In `main.bicep`, add a Container App `secrets[]` entry with a `keyVaultUrl`
-   pointing at each secret (copy the `acs-connection-string` block ~line 337), and
-   an `env[]` entry mapping `STRIPE_SECRET_KEY` → `secretRef: 'stripe-secret-key'`
-   (copy the `ACS_CONNECTION_STRING` block ~line 436).
-3. `STRIPE_PUBLISHABLE_KEY` and `STRIPE_CURRENCY` are not secrets — add them as plain
-   `env[]` values (or as params).
-4. Populate the secret values via the same path you use for
-   `DOPS-ENTRA-EXTERNAL-ID-*` / `DOPS-WORKER-API-KEY` (the `dops-dev-secrets`
-   pipeline variable group).
-5. `az bicep build --file infra/main.bicep --outfile $env:TEMP\proof.json` for each
-   environment file before committing (per workspace CLAUDE.md).
+To turn it on, set these **pipeline variables** in the `dops-dev` (secrets) variable
+group — no Bicep edits needed:
+
+| Variable | Secret? | Maps to |
+| --- | --- | --- |
+| `DOPS_STRIPE_SECRET_KEY` | yes | `STRIPE_SECRET_KEY` |
+| `DOPS_STRIPE_WEBHOOK_SECRET` | yes | `STRIPE_WEBHOOK_SECRET` |
+| `DOPS_STRIPE_PUBLISHABLE_KEY` | no | `STRIPE_PUBLISHABLE_KEY` |
+| `DOPS_STRIPE_CURRENCY` | no | `STRIPE_CURRENCY` (default `cad`) |
+| `DOPS_STRIPE_PLATFORM_FEE_BPS` | no | `STRIPE_PLATFORM_FEE_BPS` (default `0`) |
+| `DOPS_STRIPE_BILLING_PRICES_JSON` | no | `STRIPE_BILLING_PRICES_JSON` |
+| `DOPS_FRONTEND_BASE_URL` | no | `FRONTEND_BASE_URL` (return URLs) |
+
+Then redeploy infra. (Optional sanity check before committing Bicep changes:
+`az bicep build --file infra/main.bicep --outfile $env:TEMP\proof.json`.)
 
 > The publishable key reaches the SPA at runtime via `GET /invoices/payments/config`
 > — no frontend rebuild needed when you flip Stripe on.

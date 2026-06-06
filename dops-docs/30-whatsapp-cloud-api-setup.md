@@ -117,15 +117,22 @@ credentials are both present.
 
 ## Step 8 — Deploy config (Azure)
 
-Store `WHATSAPP_ACCESS_TOKEN` and `WHATSAPP_VERIFY_TOKEN` in **Key Vault**, mirroring
-the ACS / Stripe pattern in `dops-infra/infra/main.bicep`:
+**The Bicep is already wired.** The Key Vault secrets (`DOPS-WHATSAPP-ACCESS-TOKEN`,
+`DOPS-WHATSAPP-VERIFY-TOKEN`) are created on every deploy (empty by default) and
+bound to the API only when populated — so a deploy is safe with nothing set, and
+WhatsApp stays config-pending until you supply values.
 
-1. Add Key Vault secrets + `*SecretName` outputs in `modules/key-vault.bicep`.
-2. Add Container App `secrets[]` (`keyVaultUrl`) + `env[]` (`secretRef`) entries in
-   `main.bicep` (copy the `acs-connection-string` blocks).
-3. `WHATSAPP_PHONE_NUMBER_ID` and `WHATSAPP_API_VERSION` are not secrets — plain
-   `env[]` values.
-4. `az bicep build` each environment file before committing (per CLAUDE.md).
+To turn it on, set these **pipeline variables** in the `dops-dev` (secrets) variable
+group — no Bicep edits needed:
+
+| Variable | Secret? | Maps to |
+| --- | --- | --- |
+| `DOPS_WHATSAPP_ACCESS_TOKEN` | yes | `WHATSAPP_ACCESS_TOKEN` |
+| `DOPS_WHATSAPP_VERIFY_TOKEN` | yes | `WHATSAPP_VERIFY_TOKEN` |
+| `DOPS_WHATSAPP_PHONE_NUMBER_ID` | no | `WHATSAPP_PHONE_NUMBER_ID` |
+
+`WHATSAPP_API_VERSION` defaults to `v21.0` in the API config; override via env only
+if needed. Then redeploy infra.
 
 ## Step 9 — Verify end to end
 
