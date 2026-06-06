@@ -1,0 +1,136 @@
+/* ===========================================================================
+   DrivingOps — Microsoft Entra External ID sign-in page custom CSS
+   ---------------------------------------------------------------------------
+   Paste this into: Entra admin center → Company branding → (edit) →
+   Sign-in form → "Custom CSS" (upload).  See
+   ../25-auth-entra-external-id.md  →  "Branding the sign-in pages".
+
+   IMPORTANT:
+   - These `ext-*` selectors follow Microsoft's company-branding custom CSS
+     reference for the External ID sign-in experience. Microsoft can change
+     their DOM, so ALWAYS start from the official downloadable template CSS
+     (the "Custom CSS" panel offers a template download) and layer these
+     overrides on top, then test on a real sign-in.
+   - Palette mirrors the app (tailwind.config.ts): navy #071b3a,
+     electric #0f4cff, ice #eef7ff, success #16a34a.
+   =========================================================================== */
+
+:root {
+  --dops-navy: #071b3a;
+  --dops-electric: #0f4cff;
+  --dops-ice: #eef7ff;
+  --dops-accent: #16a34a;
+  --dops-card-radius: 16px;
+  --dops-control-radius: 10px;
+  --dops-glow: 0 18px 40px -24px rgba(15, 76, 255, 0.55);
+  --dops-font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Page background — soft ice wash with a hint of navy at the edges */
+body,
+.ext-background-image {
+  background: radial-gradient(1200px 600px at 50% -10%, #ffffff 0%, var(--dops-ice) 45%, #dfeeff 100%) !important;
+  font-family: var(--dops-font) !important;
+}
+
+/* Center the card with comfortable breathing room */
+.ext-middle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 100vh !important;
+}
+
+/* The sign-in card */
+.ext-sign-in-box {
+  border: 1px solid #e2ecf9 !important;
+  border-radius: var(--dops-card-radius) !important;
+  box-shadow: var(--dops-glow) !important;
+  padding: 32px 28px !important;
+  background: #ffffff !important;
+}
+
+/* Banner logo (upload the DrivingOps logo separately in the branding UI) */
+.ext-header-logo {
+  max-height: 40px !important;
+  margin-bottom: 8px !important;
+}
+
+/* Titles */
+.ext-title {
+  color: var(--dops-navy) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em !important;
+}
+.ext-subtitle,
+.ext-text-block-text {
+  color: #475569 !important;
+}
+
+/* Inputs */
+.ext-input,
+.ext-input[type="text"],
+.ext-input[type="email"],
+.ext-input[type="password"] {
+  border: 1px solid #cbd9ec !important;
+  border-radius: var(--dops-control-radius) !important;
+  padding: 10px 12px !important;
+}
+.ext-input:focus {
+  border-color: var(--dops-electric) !important;
+  box-shadow: 0 0 0 3px rgba(15, 76, 255, 0.18) !important;
+  outline: none !important;
+}
+
+/* Primary button */
+.ext-button.ext-primary {
+  background: var(--dops-electric) !important;
+  border: none !important;
+  border-radius: var(--dops-control-radius) !important;
+  box-shadow: var(--dops-glow) !important;
+  font-weight: 700 !important;
+}
+.ext-button.ext-primary:hover {
+  background: #0b3fe0 !important;
+}
+
+/* Secondary / back button */
+.ext-button.ext-secondary {
+  background: #ffffff !important;
+  color: var(--dops-navy) !important;
+  border: 1px solid #cbd9ec !important;
+  border-radius: var(--dops-control-radius) !important;
+}
+
+/* "Create one" and other links */
+.ext-link,
+a {
+  color: var(--dops-electric) !important;
+}
+
+/* Social / federated provider tiles (Google, Outlook/Hotmail) */
+.ext-promoted-fed-cred-box,
+.ext-promoted-fed-creds {
+  border: 1px solid #e2ecf9 !important;
+  border-radius: var(--dops-card-radius) !important;
+  box-shadow: var(--dops-glow) !important;
+  padding: 8px !important;
+  background: #ffffff !important;
+}
+.ext-promoted-fed-cred-button {
+  border-radius: var(--dops-control-radius) !important;
+}
+.ext-promoted-fed-cred-button:hover {
+  background: var(--dops-ice) !important;
+}
+
+/* Validation / error text */
+.ext-error {
+  color: #b91c1c !important;
+}
+
+/* Footer boilerplate (privacy / terms) */
+.ext-boilerplate-text,
+.ext-footer {
+  color: #64748b !important;
+}

@@ -27,6 +27,62 @@ The MSAL client already derives `knownAuthorities` from the authority host, so i
 6. **Associate the user flow** with both apps so customers hit the sign-up/sign-in experience.
 7. **Add logout redirect URIs** matching the local + deployed origins.
 
+## Branding the sign-in pages
+
+The hosted pages at `https://<tenant>.ciamlogin.com/...` (sign in, sign up, "Create one")
+are styled through **Company branding** on the External ID tenant — this is tenant
+configuration, not app code. Four levels of control, increasing effort vs. polish:
+
+| Level | Effort | What you get |
+|-------|--------|--------------|
+| 1. Company branding | Low (portal) | Background image/color, banner + square logo, favicon, sign-in text, footer (privacy/terms), basic colors |
+| 2. Custom CSS | Medium | Restyle the card, buttons, inputs, social-provider tiles, fonts, backgrounds to match the app |
+| 3. Custom HTML page template | Higher | Your own full-page HTML; Entra injects just the input controls |
+| 4. Native authentication | Highest | Build the whole sign-in UI inside the SPA — no redirect to `ciamlogin.com` |
+
+**Recommended: do levels 1 + 2.** Best polish-per-effort, no hosting, keeps the MSAL
+redirect flow untouched.
+
+### Portal steps (levels 1 + 2)
+
+1. Open the **Microsoft Entra admin center** (`https://entra.microsoft.com`) and **switch
+   directory to the External ID tenant** (`<tenant>.onmicrosoft.com`) — top-right directory
+   switcher. Branding is per-tenant, so you must be in the right one.
+2. Go to **Entra ID → Company branding** (a.k.a. *User experiences → Company branding*).
+   Under the **Default sign-in experience**, click **Edit** (or **Customize / Get started**
+   if none exists yet).
+3. **Basics** — set the page **Background image** (1920×1080 recommended) and/or
+   **Background color** `#eef7ff` (app "ice"); set the **Favicon**.
+4. **Layout** — keep the default centered template. Open **Custom CSS → Upload** and upload
+   [`assets/entra-external-id-branding.css`](assets/entra-external-id-branding.css). Tip: use
+   the panel's **Download template** first, then layer our overrides on top so selectors stay
+   current.
+5. **Header** — upload the **banner logo** (a transparent PNG of the DrivingOps mark/wordmark,
+   ~245×36, max ~36px tall). **Footer** — add **Privacy & cookies** and **Terms of use** links.
+6. **Sign-in form** — optionally set a **square logo** (240×240), sign-in page **text**, and
+   username hint. (The page heading/sub-copy you control in-app live in the SPA, not here.)
+7. **Review + Save.** Branding/CSS changes can take a while to propagate and are cached —
+   test in a fresh incognito window. Verify against a real sign-in:
+   `https://<tenant>.ciamlogin.com/<tenant>.onmicrosoft.com/oauth2/v2.0/authorize?...`
+   (easiest: just trigger sign-in from the app).
+8. Repeat for any **language-specific** branding (e.g. French) if you localize the pages.
+
+### Codify it (optional) via Microsoft Graph
+
+Branding can be version-controlled instead of hand-edited:
+`PATCH https://graph.microsoft.com/v1.0/organization/{tenantId}/branding/localizations/{locale}`
+with `backgroundColor`, `customCSSRelativeUrl`/`customCSS`, logos, etc. Keep the CSS source in
+this repo ([`assets/entra-external-id-branding.css`](assets/entra-external-id-branding.css)) as
+the source of truth and push it with a small script if you go this route.
+
+### Caveats
+- The `ext-*` CSS selectors target Microsoft's DOM, which they can change — keep our override
+  file in sync with the downloadable template and re-test after Microsoft updates.
+- Company branding (incl. custom CSS) is included in External ID; **custom URL domains** and
+  some advanced options have separate licensing — confirm before relying on them.
+- This restyles the **Microsoft-hosted** pages only. The DrivingOps `/login` and
+  `/invite/accept` screens are in the SPA and are branded there already.
+
 ## Required values
 
 | Variable | Where it comes from |
