@@ -231,6 +231,58 @@ div[class*="account-tile"]:hover {
   border-color: var(--dops-electric) !important;
 }
 
+/* ===========================================================================
+   NEW Entra External ID experience (Fluent UI v9 / Griffel)
+   ---------------------------------------------------------------------------
+   This tenant renders sign-in with Fluent UI, whose class names are
+   auto-generated hashes (e.g. .f15pt5es) that change between Microsoft
+   releases — DO NOT target them. We anchor on the stable `data-testid` hooks
+   and use :has() to reach the clickable ancestor. Best-effort and may need
+   updates after Microsoft ships changes. For full, stable control, native
+   authentication (sign-in built inside the SPA) is the real path.
+   =========================================================================== */
+
+/* Social provider buttons = a clickable element that has a label
+   (data-testid="mainText") AND a provider icon (img). Make them attached,
+   full-width, white, bordered, left-aligned with the icon. */
+button:has([data-testid="mainText"]):has(img),
+[role="button"]:has([data-testid="mainText"]):has(img),
+a:has([data-testid="mainText"]):has(img) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-height: 46px !important;
+  margin: 6px 0 !important;
+  padding: 10px 16px !important;
+  border: 1px solid #cbd9ec !important;
+  border-radius: var(--dops-control-radius) !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(7, 27, 58, 0.06) !important;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+button:has([data-testid="mainText"]):has(img):hover,
+[role="button"]:has([data-testid="mainText"]):has(img):hover,
+a:has([data-testid="mainText"]):has(img):hover {
+  background: var(--dops-ice) !important;
+  border-color: var(--dops-electric) !important;
+  box-shadow: var(--dops-glow) !important;
+}
+
+/* Provider icon sizing inside those buttons */
+button:has([data-testid="mainText"]):has(img) img,
+[role="button"]:has([data-testid="mainText"]):has(img) img {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* Label text */
+[data-testid="mainText"] {
+  font-weight: 600 !important;
+  color: var(--dops-navy) !important;
+}
+
 /* Validation / error text */
 .ext-error {
   color: #b91c1c !important;
