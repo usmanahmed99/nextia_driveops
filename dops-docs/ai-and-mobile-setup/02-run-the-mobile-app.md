@@ -71,7 +71,9 @@ custom-scheme redirect. In the Entra app registration for the SPA/public client,
 **Authentication → Add a platform → Mobile and desktop applications**, add the redirect URIs the app
 uses:
 
-- `dops://` — the standalone / dev-build scheme (from `app.config.ts` `scheme: "dops"`).
+- **`dops://auth`** — the standalone / dev-build redirect (scheme `dops` from `app.config.ts` + the
+  `auth` path the app pins). Entra rejects a **bare** custom scheme like `dops://`, so the path is
+  required — register exactly `dops://auth`.
 - For **Expo Go** during development, also add the Expo proxy / `exp://…` URI that the app logs at
   sign-in (it prints the exact `redirectUri`). Expo Go can't use a custom scheme, so a dev build
   (`eas build`) is the most reliable way to test the real Microsoft flow end to end.
