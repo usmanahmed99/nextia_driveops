@@ -29,7 +29,9 @@ store or rotate); the API key is a fallback for local dev.
 
 ## Option A — Deploy via Bicep (recommended)
 
-1. In your dev variable group (e.g. `dops-dev-secrets`), set:
+1. In the **`dops-dev`** pipeline variable group (these are **non-secret** config flags, so they go
+   in `dops-dev`, not `dops-dev-secrets` — `dops-dev-secrets` is for Key-Vault-linked secrets like
+   `DOPS-API-SECRET-KEY`), set:
    - `DOPS_DEPLOY_AZURE_OPENAI = true`
    - `DOPS_AZURE_OPENAI_LOCATION = eastus2` (a region where `gpt-4o-mini` is available; often differs
      from your resource-group region)
@@ -37,6 +39,10 @@ store or rotate); the API key is a fallback for local dev.
    - optionally `DOPS_AI_MODEL_PRICES_JSON =
      {"gpt-4o-mini":{"prompt_per_1k":0.015,"completion_per_1k":0.06}}`
      (USD cents per 1k tokens — used to compute `cost_cents`)
+
+   With the recommended managed-identity path there are **no secrets** in this feature — every AI
+   pipeline variable above is non-secret. (Only the optional `AZURE_OPENAI_API_KEY` fallback below is
+   a secret, and it's for local dev, not the deployed environment.)
 2. Run the infra pipeline. It creates the Azure OpenAI account + `gpt-4o-mini` deployment, assigns
    the API identity **Cognitive Services OpenAI User** on the account, and sets
    `AZURE_OPENAI_ENDPOINT` / `AZURE_OPENAI_DEPLOYMENT` / `AZURE_OPENAI_API_VERSION` /

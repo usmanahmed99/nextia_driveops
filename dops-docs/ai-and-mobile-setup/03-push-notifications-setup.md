@@ -20,18 +20,20 @@
 
 ## API configuration
 
-Set on the API (env / Key Vault / container app):
+The single API switch is the env var `EXPO_PUSH_ENABLED=true`. There is no Expo secret to store.
+Ensure migration `0033_device_tokens` has run (it ships in the API's Alembic chain).
 
-```
-EXPO_PUSH_ENABLED=true
-```
+**This is already wired into the infra pipeline** (param `expoPushEnabled` in
+`dops-infra/infra/main.bicep`, fed from `dops-dev.bicepparam`). To turn it on, set this **non-secret**
+pipeline variable in the **`dops-dev`** variable group (not `dops-dev-secrets` — that's for
+Key-Vault-linked secrets), then redeploy infra:
 
-That's the only API switch. There is no Expo secret to store. Ensure migration `0033_device_tokens`
-has run (it ships in the API's Alembic chain).
+| Variable | Secret? | Maps to |
+| --- | --- | --- |
+| `DOPS_EXPO_PUSH_ENABLED` | no | `EXPO_PUSH_ENABLED` env var on the API container app (default `false`) |
 
-> If you deploy infra via Bicep, add `EXPO_PUSH_ENABLED` as an env var on the API container app the
-> same way the Stripe/WhatsApp flags are wired (a plain non-secret value). It is safe to leave unset
-> (push simply stays off).
+It is safe to leave unset — push simply stays off and other notification channels are unaffected. For
+a non-Bicep / local API, set `EXPO_PUSH_ENABLED=true` directly in the environment.
 
 ## Mobile configuration — EAS project id (required for real tokens)
 
