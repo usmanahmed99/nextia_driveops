@@ -42,6 +42,44 @@ EXPO_PUBLIC_ENTRA_API_SCOPE=
 > `http://192.168.1.50:8000/api/v1`. Android emulator can also use `http://10.0.2.2:8000/api/v1`.
 > Make sure dops-api's CORS / host binding allows it (run uvicorn with `--host 0.0.0.0`).
 
+> **Pointing at the deployed API instead of localhost** is fine — set
+> `EXPO_PUBLIC_API_BASE_URL` to the API container app URL (e.g.
+> `https://ca-dops-api-dev.<region>.azurecontainerapps.io/api/v1`). Confirm it's reachable with
+> `GET /api/v1/health` (should return 200) and `GET /api/v1/auth/login-config` (shows the live
+> Entra `authority`, `clientId`/`audience`, and `scopes`).
+
+## 2b. Sign in with Microsoft (Entra External ID) — optional
+
+Demo login needs none of this. To enable the **Sign in with Microsoft** button, set the three Entra
+vars so they match what the **deployed API advertises** at `GET /auth/login-config`:
+
+```
+EXPO_PUBLIC_ENTRA_AUTHORITY=https://<tenant>.ciamlogin.com/<tenant>.onmicrosoft.com
+EXPO_PUBLIC_ENTRA_CLIENT_ID=<the SPA/public-client app id>
+EXPO_PUBLIC_ENTRA_API_SCOPE=api://<api-app-id>/access_as_user
+```
+
+> **Common mix-ups** (verify against `/auth/login-config`):
+> - The **authority** is the `.ciamlogin.com/<tenant>.onmicrosoft.com` form with **no `/v2.0`** suffix
+>   — not a GUID-based `…/v2.0` URL.
+> - The **client id** is the **SPA/public-client** app id (the `clientId` field from login-config),
+>   **not** the API/audience app id. The API/audience id only appears inside the **scope**
+>   (`api://<api-app-id>/access_as_user`).
+
+**Register the mobile redirect URI in Entra.** The app uses the authorization-code + PKCE flow and a
+custom-scheme redirect. In the Entra app registration for the SPA/public client, under
+**Authentication → Add a platform → Mobile and desktop applications**, add the redirect URIs the app
+uses:
+
+- `dops://` — the standalone / dev-build scheme (from `app.config.ts` `scheme: "dops"`).
+- For **Expo Go** during development, also add the Expo proxy / `exp://…` URI that the app logs at
+  sign-in (it prints the exact `redirectUri`). Expo Go can't use a custom scheme, so a dev build
+  (`eas build`) is the most reliable way to test the real Microsoft flow end to end.
+
+The flow obtains an **access token** for `access_as_user`, then calls `GET /auth/session` with it as a
+Bearer; the API validates the token (audience/issuer/JWKS) and returns the session. No client secret
+is stored in the app (public client + PKCE).
+
 ## 3. Start the dev server
 
 ```bash
