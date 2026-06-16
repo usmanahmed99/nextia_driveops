@@ -117,6 +117,19 @@ Expected:
 - `/ai-usage` shows remaining tokens at 0 and the quota bar red.
 - Raising the entitlement restores access on the next attempt.
 
+### 14-7a Ad-hoc AI token override extends the monthly limit
+
+Steps:
+1. With the tenant at/near its AI limit, grant an **ad-hoc override** for `ai_monthly_tokens`
+   (e.g. +500) via the tenant manage dialog → Extra quota (doc 15, 15-15), optionally for a period.
+2. Trigger another draft.
+
+Expected:
+- The effective monthly limit becomes plan `ai_monthly_tokens` **+ override** while the override
+  window is active; draft succeeds and `/ai-usage` reflects the higher ceiling.
+- An out-of-window (expired/future) override does not raise the limit. Revoking it restores the
+  plan-only limit.
+
 ---
 
 ## Metering integrity
