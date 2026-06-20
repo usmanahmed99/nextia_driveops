@@ -10,12 +10,38 @@ Source of truth:
 - `../dops-api/app/services/expo_push_service.py`, `notification_service.py`
 
 Preconditions:
-- The app is running (see `../docs/ai-and-mobile-setup/02-run-the-mobile-app.md`).
-- `EXPO_PUBLIC_API_BASE_URL` points at a reachable dops-api with seed data.
+- The app is running (see `../docs/ai-and-mobile-setup/02-run-the-mobile-app.md`). On this machine:
+  launch on the **`Pixel_8-_DrivingOps`** AVD with Metro on port **8083** (the `Pixel_8_-_TaxReady`
+  AVD is a separate project — do not target it). With both emulators up, open the dev URL on the
+  DrivingOps device explicitly (`adb -s <drivingops-emulator> shell am start -a
+  android.intent.action.VIEW -d exp://127.0.0.1:8083 host.exp.exponent` after `adb reverse tcp:8083
+  tcp:8083`).
+- `EXPO_PUBLIC_API_BASE_URL` points at a reachable dops-api with seed data **(the same instance the
+  web flow in doc 17 used)**.
 - `EXPO_PUBLIC_ALLOW_DEMO_LOGIN=true` for the demo-login tests, OR Entra configured for the
   Microsoft sign-in test.
-- For push: a **physical device** (Expo push tokens are not issued on simulators) and
+- For push: a **physical device** (Expo push tokens are not issued on simulators/emulators) and
   `EXPO_PUSH_ENABLED=true` on the API.
+
+---
+
+## Branding and sign-in screen
+
+### 16-0 App branding and sign-in copy
+
+Steps:
+1. Inspect the launcher icon and app name after install.
+2. Cold-launch the app and watch the splash, then the sign-in screen.
+
+Expected:
+- Launcher shows the **DrivingOps app icon** (rounded navy plate with the blue "D" mark), not the
+  default Expo icon; the label reads "DrivingOps".
+- The splash is the navy brand field with the reverse-white wordmark.
+- The sign-in screen shows the **DrivingOps horizontal logo** (blue mark + "Driving" navy / "Ops"
+  blue), not a generic car glyph.
+- The primary button reads **"Sign in"** (the Microsoft/identity-provider step is the *next*
+  screen, so the button must not say "Sign in with Microsoft").
+- The tagline reads "Your driving school, in your pocket."
 
 ---
 
@@ -43,14 +69,17 @@ Expected:
 - The app restores the session from secure storage and lands on the role stack without re-login.
 - If the stored token is invalid, it falls back to the sign-in screen.
 
-### 16-3 Microsoft sign-in availability
+### 16-3 Microsoft (Entra) sign-in availability
 
 Steps:
-1. With Entra not configured, observe the "Sign in with Microsoft" button.
-2. With Entra configured, tap it.
+1. With Entra not configured, observe the **"Sign in"** button and the note beneath the card.
+2. With Entra configured, tap **"Sign in"**.
 
 Expected:
-- Disabled with a note when not configured; initiates the Entra flow when configured.
+- The button is labelled "Sign in" (not "Sign in with Microsoft"); Microsoft/Entra is the IdP on
+  the *next* screen once the flow is initiated.
+- Disabled with a "Microsoft sign-in is not configured in this build yet" note when not configured;
+  initiates the Entra flow when configured.
 
 ### 16-4 Sign out
 
@@ -84,6 +113,10 @@ Expected:
 
 Expected:
 - Learning path shows theory/practical progress bars and recommendations.
+- The Practical card now shows a "Remaining" count (required minus completed lessons).
+- When the learner has outstanding invoices, an "Upcoming payment" card lists the next due
+  installment(s) with amount (and due date when present); "Pay now" follows the existing flow once
+  the invoice is issued.
 - Documents lists submitted documents with review-status badges.
 
 ---
@@ -116,6 +149,9 @@ Expected:
 
 Expected:
 - Schedule shows today's sessions across instructors.
+- For a staff member with `reports.read`, a "School summary" card appears with Revenue today,
+  Tomorrow's sessions, Completed today, and Unpaid (from the branch-summary endpoint). It is hidden
+  for staff without `reports.read`.
 - Learners is searchable; results show status, payment, and document badges.
 
 ### 16-11 Document reviews
